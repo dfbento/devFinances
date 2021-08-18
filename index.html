@@ -25,21 +25,21 @@
             <span>Entradas</span>
             <img src="./assets/income.svg" alt="Incomes image" />
           </h3>
-          <p>R$ 5.000,00</p>
+          <p id="incomeDisplay">R$ 5.000,00</p>
         </div>
         <div class="card">
           <h3>
             <span>Saídas</span>
             <img src="./assets/expense.svg" alt="Expense image" />
           </h3>
-          <p>R$ 2.000,00</p>
+          <p id="expenseDisplay">R$ 2.000,00</p>
         </div>
         <div class="card total">
           <h3>
             <span> Total </span>
             <img src="./assets/total.svg" alt="Total image" />
           </h3>
-          <p>R$ 3.000,00</p>
+          <p id="totalDisplay">R$ 3.000,00</p>
         </div>
       </section>
       <section id="transaction">
@@ -65,7 +65,7 @@
       <div class="modal">
         <div id="form">
           <h2>Nova transação</h2>
-          <form action="POST">
+          <form action="" onsubmit="Form.submit(event)">
             <div class="input-group">
               <label class="sr-only" for="description">Descrição</label>
               <input
@@ -85,7 +85,7 @@
                 placeholder="Valor"
               />
               <small class="help"
-                >Use o inal - (negativo) para despesas e , (vírgula) para casas
+                >Use o sinal - (negativo) para despesas e , (vírgula) para casas
                 decimais.</small
               >
             </div>
