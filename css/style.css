@@ -152,11 +152,39 @@ header {
   width: 100%;
   overflow-x: auto;
 }
+#tb-container {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 
 #data-table {
   width: 100%;
   border-spacing: 0 0.5rem;
   color: #969cb3;
+}
+
+.tableFixHead {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 300px;
+  /* height: 100px; */
+}
+.tableFixHead thead th {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  font-weight: bold;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f4f4f4;
+}
+::-webkit-scrollbar {
+  width: 4px;
+  background: #f4f4f4;
+}
+::-webkit-scrollbar-thumb {
+  background: #dad7d7;
 }
 
 table thead tr th:first-child,
