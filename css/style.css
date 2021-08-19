@@ -164,7 +164,7 @@ header {
 }
 
 .tableFixHead {
-  overflow-x: hidden;
+  overflow-x: auto;
   overflow-y: auto;
   max-height: 580px;
   /* height: 100px; */
@@ -224,6 +224,7 @@ td.expense {
 }
 ::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
   background: #f4f4f4;
 }
 ::-webkit-scrollbar-thumb {
