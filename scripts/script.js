@@ -1,3 +1,15 @@
+const Storage = {
+  get() {
+    return JSON.parse(localStorage.getItem('dev.fincances:transactions')) || []
+  },
+  set(transaction) {
+    localStorage.setItem(
+      'dev.finances:transactions',
+      JSON.stringify(transaction)
+    )
+  },
+}
+
 const Modal = {
   open() {
     document.querySelector('.modal-overlay').classList.add('active')
@@ -8,33 +20,8 @@ const Modal = {
 }
 
 const Transaction = {
-  all: [
-    {
-      description: 'Luz',
-      amount: -59935,
-      date: '23/01/2021',
-    },
-    {
-      description: 'Salário',
-      amount: 550067,
-      date: '30/01/2021',
-    },
-    {
-      description: 'Internet',
-      amount: -200075,
-      date: '15/01/2021',
-    },
-    {
-      description: 'Cursos',
-      amount: -10000,
-      date: '25/01/2021',
-    },
-    {
-      description: 'Investimentos',
-      amount: 10000,
-      date: '10/01/2021',
-    },
-  ],
+  all: Storage.get(),
+
   add(transaction) {
     Transaction.all.push(transaction)
     App.reload()
@@ -74,20 +61,22 @@ const DOM = {
   transactionsContainer: document.querySelector('#data-table tbody'),
   addTransaction(transaction, index) {
     const tr = document.createElement('tr')
-    tr.innerHTML = DOM.innerHTMLTransaction(transaction)
+    tr.innerHTML = DOM.innerHTMLTransaction(transaction, index)
+    tr.dataset.index = index
+
     DOM.transactionsContainer.appendChild(tr)
   },
-  innerHTMLTransaction(transaction) {
+  innerHTMLTransaction(transaction, index) {
     const CSSclass = transaction.amount > 0 ? 'income' : 'expense'
 
-    const amount = Utils.formartCurrency(transaction.amount)
+    const amount = Utils.formatCurrency(transaction.amount)
 
     const table = `
       <td class="description">${transaction.description}</td>
       <td class="${CSSclass}">${amount}</td>
       <td class="date">${transaction.date}</td>
       <td class="">
-        <img src="./assets/minus.svg" alt="Remove transation image" />
+        <img onclick="Transaction.remove(${index})" src="./assets/minus.svg" alt="Remove transation image" />
       </td>
     `
 
@@ -95,13 +84,13 @@ const DOM = {
   },
 
   updateBalance() {
-    document.getElementById('incomeDisplay').innerHTML = Utils.formartCurrency(
+    document.getElementById('incomeDisplay').innerHTML = Utils.formatCurrency(
       Transaction.incomes()
     )
-    document.getElementById('expenseDisplay').innerHTML = Utils.formartCurrency(
+    document.getElementById('expenseDisplay').innerHTML = Utils.formatCurrency(
       Transaction.expenses()
     )
-    document.getElementById('totalDisplay').innerHTML = Utils.formartCurrency(
+    document.getElementById('totalDisplay').innerHTML = Utils.formatCurrency(
       Transaction.total()
     )
   },
@@ -111,7 +100,7 @@ const DOM = {
 }
 
 const Utils = {
-  formartCurrency(value) {
+  formatCurrency(value) {
     const signal = Number(value) < 0 ? '-' : ''
 
     value = String(value).replace(/\D/g, '')
@@ -122,24 +111,19 @@ const Utils = {
     })
     return signal + value
   },
-}
-
-const App = {
-  init() {
-    Transaction.all.forEach((transaction) => {
-      DOM.addTransaction(transaction)
-    })
-    DOM.updateBalance()
+  formatValues(value) {
+    value = Number(value) * 100
+    return value
   },
-  reload() {
-    DOM.clearTransactions()
-    App.init()
+  formatDate(date) {
+    const splitedDate = date.split('-')
+    return `${splitedDate[2]}/${splitedDate[1]}/${splitedDate[0]}`
   },
 }
 
 const Form = {
   description: document.querySelector('input#description'),
-  amount: document.querySelector('input#amout'),
+  amount: document.querySelector('input#amount'),
   date: document.querySelector('input#date'),
 
   getValues() {
@@ -150,33 +134,68 @@ const Form = {
     }
   },
 
-  validateFileds() {
+  validateFields() {
     const { description, amount, date } = Form.getValues()
-    console.log(description)
+    if (
+      description.trim() === '' ||
+      amount.trim() === '' ||
+      date.trim() === ''
+    ) {
+      throw new Error('Por favor, preencha todos os campos!')
+    }
+  },
+
+  formatValues() {
+    let { description, amount, date } = Form.getValues()
+    amount = Utils.formatValues(amount)
+    date = Utils.formatDate(date)
+
+    return { description, amount, date }
+  },
+
+  saveTransaction(transaction) {
+    Transaction.add(transaction)
+  },
+
+  clearFields() {
+    Form.description.value = ''
+    Form.amount.value = ''
+    Form.date.value = ''
   },
 
   submit(event) {
     event.preventDefault()
-    // verificar se todos os campos foram preenchidos
-    Form.validateFileds()
-    // formatar os dados para salvar
 
-    // salvar
+    try {
+      // verificar se todos os campos foram preenchidos
+      Form.validateFields()
+      // formatar os dados para salvar
+      const transaction = Form.formatValues()
+      // salvar
+      Form.saveTransaction(transaction)
+      // limpar formulário
+      Form.clearFields()
+      // fechar modal
+      Modal.close()
+    } catch (error) {
+      alert(error.message)
+    }
+  },
+}
 
-    // limpar formulário
+const App = {
+  init() {
+    Transaction.all.forEach((transaction, index) => {
+      DOM.addTransaction(transaction, index)
+    })
+    DOM.updateBalance()
 
-    // fechar modal
-
-    // atualizar a aplicação
+    Storage.set(Transaction.all)
+  },
+  reload() {
+    DOM.clearTransactions()
+    App.init()
   },
 }
 
 App.init()
-
-Transaction.add({
-  description: 'Extra',
-  amount: 30000,
-  date: '17/08/2021',
-})
-
-//Transaction.remove(0)
