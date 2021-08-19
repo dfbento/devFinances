@@ -166,7 +166,7 @@ header {
 .tableFixHead {
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: 300px;
+  max-height: 580px;
   /* height: 100px; */
 }
 .tableFixHead thead th {
@@ -174,17 +174,6 @@ header {
   top: 0;
   z-index: 999;
   font-weight: bold;
-}
-
-::-webkit-scrollbar-track {
-  background-color: #f4f4f4;
-}
-::-webkit-scrollbar {
-  width: 4px;
-  background: #f4f4f4;
-}
-::-webkit-scrollbar-thumb {
-  background: #dad7d7;
 }
 
 table thead tr th:first-child,
@@ -227,6 +216,18 @@ td.income {
 
 td.expense {
   color: #e92929;
+}
+
+/* Scroll Style ------------------------------------ */
+::-webkit-scrollbar-track {
+  background-color: #f4f4f4;
+}
+::-webkit-scrollbar {
+  width: 4px;
+  background: #f4f4f4;
+}
+::-webkit-scrollbar-thumb {
+  background: #dad7d7;
 }
 
 /* MODAL ------------------------------------ */
