@@ -112,7 +112,8 @@ const Utils = {
     return signal + value
   },
   formatValues(value) {
-    value = Number(value) * 100
+    value = Number(value.replace(/\,\./g, '')) * 100
+
     return value
   },
   formatDate(date) {
